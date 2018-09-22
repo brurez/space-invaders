@@ -7,15 +7,17 @@ public:
     double y;
 };
 
-class Entity {
+class SpaceShip {
 public:
     void init(Position position);
 
-    void move(Position position);
+    void moveRight(float delta);
+
+    void moveLeft(float delta);
 
     Position getPosition(void);
 
-    Entity(sf::RenderWindow *win, std::string imgFile);
+    SpaceShip(sf::RenderWindow *win, std::string imgFile);
 
     void draw(void);
 
@@ -23,25 +25,37 @@ private:
     sf::RenderWindow *window;
     sf::Sprite sprite;
     sf::Texture texture;
+    const float speed = 100;
 };
 
-Entity::Entity(sf::RenderWindow *win, std::string imgFile) {
+SpaceShip::SpaceShip(sf::RenderWindow *win, std::string imgFile) {
     window = win;
     texture.loadFromFile(imgFile);
     sprite.setTexture(texture);
+    sprite.setScale(2.5, 2.5);
 }
 
-void Entity::draw() {
+void SpaceShip::draw() {
     window->draw(sprite);
+}
+
+void SpaceShip::moveRight(float delta) {
+    sprite.move(SpaceShip::speed * delta, 0.f);
+}
+
+void SpaceShip::moveLeft(float delta) {
+    sprite.move(-SpaceShip::speed * delta, 0.f);
 }
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 640), "Space Invaders", sf::Style::Close);
     window.setVerticalSyncEnabled(true);
     std::string shipImage = "assets/ship.png";
-    Entity spaceShip(&window, shipImage);
+    SpaceShip spaceShip(&window, shipImage);
 
     sf::Clock clock;
+
+    const float SHIP_SPEED = 1;
     bool isPlaying = false;
 
     while (window.isOpen()) {
@@ -69,11 +83,11 @@ int main() {
 
             // Move ship
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-
+                spaceShip.moveRight(deltaTime);
             }
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-
+                spaceShip.moveLeft(deltaTime);
             }
 
             // Check collision
