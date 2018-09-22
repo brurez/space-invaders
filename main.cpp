@@ -1,61 +1,56 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
-class Position {
+class Sprite {
 public:
-    double x;
-    double y;
-};
+    Sprite(sf::RenderWindow *win, std::string imgFile) {
+        window = win;
+        texture.loadFromFile(imgFile);
+        sprite.setTexture(texture);
+        sprite.setScale(2.5, 2.5);
 
-class SpaceShip {
-public:
-    void init(Position position);
+    }
 
-    void moveRight(float delta);
+    void setPosition(float x, float y) {
+        sprite.setPosition(x, y);  //400, 580);
+    }
 
-    void moveLeft(float delta);
+    void draw() {
+        window->draw(sprite);
+    }
 
-    Position getPosition(void);
-
-    SpaceShip(sf::RenderWindow *win, std::string imgFile);
-
-    void draw(void);
-
-private:
+protected:
     sf::RenderWindow *window;
     sf::Sprite sprite;
     sf::Texture texture;
-    const float speed = 100;
 };
 
-SpaceShip::SpaceShip(sf::RenderWindow *win, std::string imgFile) {
-    window = win;
-    texture.loadFromFile(imgFile);
-    sprite.setTexture(texture);
-    sprite.setScale(2.5, 2.5);
-}
 
-void SpaceShip::draw() {
-    window->draw(sprite);
-}
+class SpaceShip : public Sprite {
+public:
+    void moveRight(float delta) {
+        sprite.move(SpaceShip::speed * delta, 0.f);
+    }
 
-void SpaceShip::moveRight(float delta) {
-    sprite.move(SpaceShip::speed * delta, 0.f);
-}
+    void moveLeft(float delta) {
+        sprite.move(-SpaceShip::speed * delta, 0.f);
+    }
 
-void SpaceShip::moveLeft(float delta) {
-    sprite.move(-SpaceShip::speed * delta, 0.f);
-}
+    SpaceShip(sf::RenderWindow *win, std::string imgFile) : Sprite(win, imgFile) {}
+
+private:
+    float speed = 140;
+};
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 640), "Space Invaders", sf::Style::Close);
     window.setVerticalSyncEnabled(true);
     std::string shipImage = "assets/ship.png";
     SpaceShip spaceShip(&window, shipImage);
+    spaceShip.setPosition(400, 580);
 
     sf::Clock clock;
 
-    const float SHIP_SPEED = 1;
     bool isPlaying = false;
 
     while (window.isOpen()) {
@@ -79,15 +74,15 @@ int main() {
         }
 
         if (isPlaying) {
-            float deltaTime = clock.restart().asSeconds();
+            float delta = clock.restart().asSeconds();
 
             // Move ship
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-                spaceShip.moveRight(deltaTime);
+                spaceShip.moveRight(delta);
             }
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-                spaceShip.moveLeft(deltaTime);
+                spaceShip.moveLeft(delta);
             }
 
             // Check collision
