@@ -39,15 +39,17 @@ protected:
 class SpaceShip : public Sprite {
 public:
     void moveRight(float delta) {
-        sf::Vector2f distance(SpaceShip::speed * delta, 0.f);
-        if(canMove(distance)){
+        sf::Vector2f
+        distance(SpaceShip::speedN * delta,
+                 0.f);
+        if (canMove(distance)) {
             sprite.move(distance);
         }
     }
 
     void moveLeft(float delta) {
-        sf::Vector2f distance(-SpaceShip::speed * delta, 0.f);
-        if(canMove(distance)){
+        sf::Vector2f distance(-SpaceShip::speedN * delta, 0.f);
+        if (canMove(distance)) {
             sprite.move(distance);
         }
     }
@@ -69,7 +71,20 @@ private:
         return true;
     }
 
-    float speed = 300;
+    float speedN = 300;
+};
+
+class Fire : public Sprite {
+public:
+    Fire(sf::RenderWindow *win, std::string imgFile) : Sprite(win, imgFile) {}
+
+    void moveUp(float delta) {
+        sf::Vector2f distance(0.f, Fire::speedN * delta);
+        sprite.move(distance);
+    }
+
+private:
+    float speedN = -300;
 };
 
 int main() {
@@ -77,11 +92,18 @@ int main() {
     window.setVerticalSyncEnabled(true);
 
     std::string shipImage = "assets/ship.png";
+    std::string fireImage = "assets/fire.png";
+
     SpaceShip spaceShip(&window, shipImage);
-    spaceShip.setPosition(400, 580);
+    spaceShip.setPosition(
+            (window.getSize().x - spaceShip.getSize().x) / 2,
+            window.getSize().y - spaceShip.getSize().y - 4);
+
+    std::vector<Fire *> fires;
 
     sf::Clock clock;
 
+    float lastShot = 1;
     bool isPlaying = false;
 
     while (window.isOpen()) {
@@ -95,10 +117,11 @@ int main() {
             }
 
             // Space key pressed: play
-            if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space)) {
+            if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Return)) {
                 if (!isPlaying) {
                     // restart game
                     isPlaying = true;
+                    lastShot = 1;
                     clock.restart();
                 }
             }
@@ -116,6 +139,23 @@ int main() {
                 spaceShip.moveLeft(delta);
             }
 
+            // Fires a new shot
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+                if (lastShot >= 0.5) {
+                    fires.emplace_back(new Fire(&window, fireImage));
+                    fires.back()->setPosition(
+                            spaceShip.getPosition().x + spaceShip.getSize().x / 2 - 6,
+                            spaceShip.getPosition().y - spaceShip.getSize().y);
+                    lastShot = 0;
+                }
+            }
+
+            for (unsigned i = 0; i < fires.size(); i++) {
+                fires[i]->moveUp(delta);
+            }
+
+            lastShot += delta;
+
             // Check collision
 
         }
@@ -124,6 +164,9 @@ int main() {
 
         if (isPlaying) {
             spaceShip.draw();
+            for (unsigned i = 0; i < fires.size(); i++) {
+                fires[i]->draw();
+            }
 
         } else {
         }
