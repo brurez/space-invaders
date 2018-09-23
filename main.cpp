@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <cmath>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -30,6 +31,10 @@ public:
 
     void draw() {
         window->draw(sprite);
+    }
+
+    void setRepeated(bool repeated) {
+        texture.setRepeated(repeated);
     }
 
 protected:
@@ -96,20 +101,33 @@ public:
         speed = sf::Vector2f(speedN, 10);
     }
 
+    void addSecondTexture(string imgFile) {
+        texture2.loadFromFile(imgFile);
+    }
+
     void move(float delta) {
         sf::Vector2f distance(speed.x * delta, speed.y * delta);
         sprite.move(distance);
         float d = 1.5f * delta;
-        speed = sf::Vector2f(speed.x * cos(d) - speed.y * sin(d),  speed.x * sin(d) + speed.y * cos(d));
+        speed = sf::Vector2f(speed.x * cos(d) - speed.y * sin(d), speed.x * sin(d) + speed.y * cos(d));
     }
 
-    static vector<Alien *> build(unsigned n, sf::RenderWindow *win){
+    void setFireTexture() {
+        sprite.setTexture(texture2);
+    }
+
+    void removeFireTexture() {
+        sprite.setTexture(texture);
+    }
+
+    static vector<Alien *> build(unsigned n, sf::RenderWindow *win) {
         vector<Alien *> aliens;
         string alienImage1 = "assets/alien-idle.png";
 
-        for(unsigned i = 0; i <= n; i++) {
-            aliens.emplace_back(new Alien (win, alienImage1));
-            aliens.back()->setPosition(((win->getSize().x - 125 ) / n) * i + 40, 200);
+        for (unsigned i = 0; i <= n; i++) {
+            aliens.emplace_back(new Alien(win, alienImage1));
+            aliens.back()->setPosition(((win->getSize().x - 140) / n) * i + 50, 200);
+            aliens.back()->addSecondTexture("assets/alien-firing.png");
         }
         return aliens;
     }
@@ -117,6 +135,7 @@ public:
 private:
     sf::Vector2f speed;
     float speedN = 50;
+    sf::Texture texture2;
 };
 
 int main() {
@@ -130,6 +149,14 @@ int main() {
     spaceShip.setPosition(
             (window.getSize().x - spaceShip.getSize().x) / 2,
             window.getSize().y - spaceShip.getSize().y - 4);
+
+    sf::Texture bg;
+    bg.loadFromFile("assets/space.png");
+    bg.setRepeated(true);
+    sf::Sprite bgSprite;
+    bgSprite.setTexture(bg);
+    bgSprite.setScale(2.5, 2.5);
+    bgSprite.setTextureRect({0, 0, 800, 600});
 
     std::vector<Fire *> fires;
     std::vector<Alien *> aliens = Alien::build(8, &window);
@@ -200,16 +227,30 @@ int main() {
         window.clear();
 
         if (isPlaying) {
+            window.draw(bgSprite);
+
             spaceShip.draw();
+
             for (unsigned i = 0; i < fires.size(); i++) {
                 fires[i]->draw();
             }
 
             for (unsigned i = 0; i < aliens.size(); i++) {
                 aliens[i]->draw();
+                int r = rand() % 20;
+                if (r == 5) {
+                    aliens[i]->setFireTexture();
+                } else if (r == 6) {
+                    aliens[i]->removeFireTexture();
+
+                }
             }
 
+
         } else {
+            Sprite title = Sprite(&window, "assets/intro.png");
+            title.setPosition(140, 160);
+            title.draw();
         }
 
 
