@@ -12,7 +12,17 @@ public:
     }
 
     void setPosition(float x, float y) {
-        sprite.setPosition(x, y);  //400, 580);
+        sprite.setPosition(x, y);
+    }
+
+    sf::Vector2f getPosition() {
+        return sprite.getPosition();
+    }
+
+    sf::Vector2f getSize() {
+        const sf::Vector2u size = texture.getSize();
+        const sf::Vector2f scale = sprite.getScale();
+        return sf::Vector2f(size.x * scale.x, size.y * scale.y);
     }
 
     void draw() {
@@ -29,22 +39,43 @@ protected:
 class SpaceShip : public Sprite {
 public:
     void moveRight(float delta) {
-        sprite.move(SpaceShip::speed * delta, 0.f);
+        sf::Vector2f distance(SpaceShip::speed * delta, 0.f);
+        if(canMove(distance)){
+            sprite.move(distance);
+        }
     }
 
     void moveLeft(float delta) {
-        sprite.move(-SpaceShip::speed * delta, 0.f);
+        sf::Vector2f distance(-SpaceShip::speed * delta, 0.f);
+        if(canMove(distance)){
+            sprite.move(distance);
+        }
     }
 
     SpaceShip(sf::RenderWindow *win, std::string imgFile) : Sprite(win, imgFile) {}
 
 private:
-    float speed = 140;
+    bool canMove(sf::Vector2f distance) {
+        float posX = sprite.getPosition().x + distance.x;
+        float posY = sprite.getPosition().y + distance.y;
+        sf::Vector2u wSize = window->getSize();
+
+        if (posX + getSize().x > wSize.x || posX < 0) {
+            return false;
+        }
+        if (posY + getSize().y > wSize.y || posY < 0) {
+            return false;
+        }
+        return true;
+    }
+
+    float speed = 300;
 };
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 640), "Space Invaders", sf::Style::Close);
     window.setVerticalSyncEnabled(true);
+
     std::string shipImage = "assets/ship.png";
     SpaceShip spaceShip(&window, shipImage);
     spaceShip.setPosition(400, 580);
