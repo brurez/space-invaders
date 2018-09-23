@@ -1,9 +1,12 @@
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <cmath>
+
+using namespace std;
 
 class Sprite {
 public:
-    Sprite(sf::RenderWindow *win, std::string imgFile) {
+    Sprite(sf::RenderWindow *win, string imgFile) {
         window = win;
         texture.loadFromFile(imgFile);
         sprite.setTexture(texture);
@@ -54,7 +57,7 @@ public:
         }
     }
 
-    SpaceShip(sf::RenderWindow *win, std::string imgFile) : Sprite(win, imgFile) {}
+    SpaceShip(sf::RenderWindow *win, string imgFile) : Sprite(win, imgFile) {}
 
 private:
     bool canMove(sf::Vector2f distance) {
@@ -76,7 +79,7 @@ private:
 
 class Fire : public Sprite {
 public:
-    Fire(sf::RenderWindow *win, std::string imgFile) : Sprite(win, imgFile) {}
+    Fire(sf::RenderWindow *win, string imgFile) : Sprite(win, imgFile) {}
 
     void moveUp(float delta) {
         sf::Vector2f distance(0.f, Fire::speedN * delta);
@@ -87,12 +90,41 @@ private:
     float speedN = -300;
 };
 
+class Alien : public Sprite {
+public:
+    Alien(sf::RenderWindow *win, string imgFile) : Sprite(win, imgFile) {
+        speed = sf::Vector2f(speedN, 10);
+    }
+
+    void move(float delta) {
+        sf::Vector2f distance(speed.x * delta, speed.y * delta);
+        sprite.move(distance);
+        float d = 1.5f * delta;
+        speed = sf::Vector2f(speed.x * cos(d) - speed.y * sin(d),  speed.x * sin(d) + speed.y * cos(d));
+    }
+
+    static vector<Alien *> build(unsigned n, sf::RenderWindow *win){
+        vector<Alien *> aliens;
+        string alienImage1 = "assets/alien-idle.png";
+
+        for(unsigned i = 0; i <= n; i++) {
+            aliens.emplace_back(new Alien (win, alienImage1));
+            aliens.back()->setPosition(((win->getSize().x - 125 ) / n) * i + 40, 200);
+        }
+        return aliens;
+    }
+
+private:
+    sf::Vector2f speed;
+    float speedN = 50;
+};
+
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 640), "Space Invaders", sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
-    std::string shipImage = "assets/ship.png";
-    std::string fireImage = "assets/fire.png";
+    string shipImage = "assets/ship.png";
+    string fireImage = "assets/fire.png";
 
     SpaceShip spaceShip(&window, shipImage);
     spaceShip.setPosition(
@@ -100,6 +132,7 @@ int main() {
             window.getSize().y - spaceShip.getSize().y - 4);
 
     std::vector<Fire *> fires;
+    std::vector<Alien *> aliens = Alien::build(8, &window);
 
     sf::Clock clock;
 
@@ -154,6 +187,10 @@ int main() {
                 fires[i]->moveUp(delta);
             }
 
+            for (unsigned i = 0; i < aliens.size(); i++) {
+                aliens[i]->move(delta);
+            }
+
             lastShot += delta;
 
             // Check collision
@@ -166,6 +203,10 @@ int main() {
             spaceShip.draw();
             for (unsigned i = 0; i < fires.size(); i++) {
                 fires[i]->draw();
+            }
+
+            for (unsigned i = 0; i < aliens.size(); i++) {
+                aliens[i]->draw();
             }
 
         } else {
