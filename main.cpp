@@ -2,6 +2,7 @@
 #include <string>
 #include <cmath>
 #include <stdlib.h>
+#include "Collision.h"
 
 using namespace std;
 
@@ -37,9 +38,9 @@ public:
         texture.setRepeated(repeated);
     }
 
+    sf::Sprite sprite;
 protected:
     sf::RenderWindow *window;
-    sf::Sprite sprite;
     sf::Texture texture;
 };
 
@@ -227,7 +228,7 @@ int main() {
         window.clear();
 
         if (isPlaying) {
-            window.draw(bgSprite);
+             window.draw(bgSprite);
 
             spaceShip.draw();
 
@@ -236,6 +237,11 @@ int main() {
             }
 
             for (unsigned i = 0; i < aliens.size(); i++) {
+                for (unsigned j = 0; j < fires.size(); j++) {
+                    if(Collision::PixelPerfectTest(aliens[i]->sprite, fires[j]->sprite)){
+                        aliens.erase(aliens.begin() + i);
+                    }
+                }
                 aliens[i]->draw();
                 int r = rand() % 20;
                 if (r == 5) {
