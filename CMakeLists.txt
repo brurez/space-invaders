@@ -3,7 +3,7 @@ project(sfml_hello)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(sfml_hello main.cpp Collision.cpp Collision.h)
+add_executable(sfml_hello src/main.cpp src/Collision.cpp src/Collision.h)
 
 # Detect and add SFML
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
