@@ -3,141 +3,14 @@
 #include <cmath>
 #include <stdlib.h>
 #include "Collision.h"
+#include "Entities/Sprite.h"
+#include "Entities/SpaceShip.h"
+#include "Entities/Fire.h"
+#include "Entities/Alien.h"
+
 
 using namespace std;
 
-class Sprite {
-public:
-    Sprite(sf::RenderWindow *win, string imgFile) {
-        window = win;
-        texture.loadFromFile(imgFile);
-        sprite.setTexture(texture);
-        sprite.setScale(2.5, 2.5);
-
-    }
-
-    void setPosition(float x, float y) {
-        sprite.setPosition(x, y);
-    }
-
-    sf::Vector2f getPosition() {
-        return sprite.getPosition();
-    }
-
-    sf::Vector2f getSize() {
-        const sf::Vector2u size = texture.getSize();
-        const sf::Vector2f scale = sprite.getScale();
-        return sf::Vector2f(size.x * scale.x, size.y * scale.y);
-    }
-
-    void draw() {
-        window->draw(sprite);
-    }
-
-    void setRepeated(bool repeated) {
-        texture.setRepeated(repeated);
-    }
-
-    sf::Sprite sprite;
-protected:
-    sf::RenderWindow *window;
-    sf::Texture texture;
-};
-
-
-class SpaceShip : public Sprite {
-public:
-    void moveRight(float delta) {
-        sf::Vector2f
-        distance(SpaceShip::speedN * delta,
-                 0.f);
-        if (canMove(distance)) {
-            sprite.move(distance);
-        }
-    }
-
-    void moveLeft(float delta) {
-        sf::Vector2f distance(-SpaceShip::speedN * delta, 0.f);
-        if (canMove(distance)) {
-            sprite.move(distance);
-        }
-    }
-
-    SpaceShip(sf::RenderWindow *win, string imgFile) : Sprite(win, imgFile) {}
-
-private:
-    bool canMove(sf::Vector2f distance) {
-        float posX = sprite.getPosition().x + distance.x;
-        float posY = sprite.getPosition().y + distance.y;
-        sf::Vector2u wSize = window->getSize();
-
-        if (posX + getSize().x > wSize.x || posX < 0) {
-            return false;
-        }
-        if (posY + getSize().y > wSize.y || posY < 0) {
-            return false;
-        }
-        return true;
-    }
-
-    float speedN = 300;
-};
-
-class Fire : public Sprite {
-public:
-    Fire(sf::RenderWindow *win, string imgFile) : Sprite(win, imgFile) {}
-
-    void moveUp(float delta) {
-        sf::Vector2f distance(0.f, Fire::speedN * delta);
-        sprite.move(distance);
-    }
-
-private:
-    float speedN = -300;
-};
-
-class Alien : public Sprite {
-public:
-    Alien(sf::RenderWindow *win, string imgFile) : Sprite(win, imgFile) {
-        speed = sf::Vector2f(speedN, 10);
-    }
-
-    void addSecondTexture(string imgFile) {
-        texture2.loadFromFile(imgFile);
-    }
-
-    void move(float delta) {
-        sf::Vector2f distance(speed.x * delta, speed.y * delta);
-        sprite.move(distance);
-        float d = 1.5f * delta;
-        speed = sf::Vector2f(speed.x * cos(d) - speed.y * sin(d), speed.x * sin(d) + speed.y * cos(d));
-    }
-
-    void setFireTexture() {
-        sprite.setTexture(texture2);
-    }
-
-    void removeFireTexture() {
-        sprite.setTexture(texture);
-    }
-
-    static vector<Alien *> build(unsigned n, sf::RenderWindow *win) {
-        vector<Alien *> aliens;
-        string alienImage1 = "assets/alien-idle.png";
-
-        for (unsigned i = 0; i <= n; i++) {
-            aliens.emplace_back(new Alien(win, alienImage1));
-            aliens.back()->setPosition(((win->getSize().x - 140) / n) * i + 50, 200);
-            aliens.back()->addSecondTexture("assets/alien-firing.png");
-        }
-        return aliens;
-    }
-
-private:
-    sf::Vector2f speed;
-    float speedN = 50;
-    sf::Texture texture2;
-};
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 640), "Space Invaders", sf::Style::Close);
