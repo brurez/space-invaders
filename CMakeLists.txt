@@ -3,7 +3,7 @@ project(sfml_hello)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(sfml_hello src/main.cpp src/Collision.cpp src/Collision.h src/Entities/Sprite.cpp src/Entities/Sprite.h src/Entities/SpaceShip.cpp src/Entities/SpaceShip.h src/Entities/Fire.cpp src/Entities/Fire.h src/Entities/Alien.cpp src/Entities/Alien.h)
+add_executable(sfml_hello src/main.cpp src/Collision.cpp src/Collision.h src/Entities/Sprite.cpp src/Entities/Sprite.h src/Entities/SpaceShip.cpp src/Entities/SpaceShip.h src/Entities/Fire.cpp src/Entities/Fire.h src/Entities/Alien.cpp src/Entities/Alien.h src/game.h src/game.cpp)
 
 # Detect and add SFML
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})

@@ -4,16 +4,20 @@
 
 #include "Sprite.h"
 
-Sprite::Sprite(sf::RenderWindow *win, string imgFile) {
+Sprite::Sprite(sf::RenderWindow *win, string &imgFile) {
     window = win;
-    texture.loadFromFile(imgFile);
-    sprite.setTexture(texture);
+    setTexture(imgFile);
     sprite.setScale(2.5, 2.5);
 
 }
 
 void Sprite::setPosition(float x, float y) {
     sprite.setPosition(x, y);
+}
+
+void Sprite::setTexture(string imgFile) {
+    texture.loadFromFile(imgFile);
+    sprite.setTexture(texture);
 }
 
 sf::Vector2f Sprite::getPosition() {

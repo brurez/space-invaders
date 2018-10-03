@@ -7,6 +7,7 @@
 #include "Entities/SpaceShip.h"
 #include "Entities/Fire.h"
 #include "Entities/Alien.h"
+#include "game.h"
 
 
 using namespace std;
@@ -18,6 +19,9 @@ int main() {
 
     string shipImage = "assets/ship.png";
     string fireImage = "assets/fire.png";
+
+    string alien1 = "assets/alien-idle.png";
+    string alien2 = "assets/alien-firing.png";
 
     SpaceShip spaceShip(&window, shipImage);
     spaceShip.setPosition(
@@ -33,7 +37,8 @@ int main() {
     bgSprite.setTextureRect({0, 0, 800, 600});
 
     std::vector<Fire *> fires;
-    std::vector<Alien *> aliens = Alien::build(8, &window);
+    std::vector<Alien *> aliens;
+    aliens = Game::buildAliens(8, &window, alien1);
 
     sf::Clock clock;
 
@@ -84,12 +89,12 @@ int main() {
                 }
             }
 
-            for (unsigned i = 0; i < fires.size(); i++) {
-                fires[i]->moveUp(delta);
+            for (auto &fire : fires) {
+                fire->moveUp(delta);
             }
 
-            for (unsigned i = 0; i < aliens.size(); i++) {
-                aliens[i]->move(delta);
+            for (auto &alien : aliens) {
+                alien->move(delta);
             }
 
             lastShot += delta;
@@ -105,29 +110,30 @@ int main() {
 
             spaceShip.draw();
 
-            for (unsigned i = 0; i < fires.size(); i++) {
-                fires[i]->draw();
+            for (auto &fire : fires) {
+                fire->draw();
             }
 
             for (unsigned i = 0; i < aliens.size(); i++) {
-                for (unsigned j = 0; j < fires.size(); j++) {
-                    if(Collision::PixelPerfectTest(aliens[i]->sprite, fires[j]->sprite)){
+                for (auto &fire : fires) {
+                    if(Collision::PixelPerfectTest(aliens[i]->sprite, fire->sprite)){
                         aliens.erase(aliens.begin() + i);
                     }
                 }
                 aliens[i]->draw();
                 int r = rand() % 20;
                 if (r == 5) {
-                    aliens[i]->setFireTexture();
+                    aliens[i]->setTexture(alien2);
                 } else if (r == 6) {
-                    aliens[i]->removeFireTexture();
+                    aliens[i]->setTexture(alien1);
 
                 }
             }
 
 
         } else {
-            Sprite title = Sprite(&window, "assets/intro.png");
+            string introImg = "assets/intro.png";
+            Sprite title = Sprite(&window, introImg);
             title.setPosition(140, 160);
             title.draw();
         }
