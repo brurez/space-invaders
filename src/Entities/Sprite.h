@@ -17,6 +17,7 @@ class Sprite {
 protected:
     sf::RenderWindow *window;
     sf::Texture texture;
+    sf::Vector2f speed;
 
 public:
     Sprite(sf::RenderWindow *win, string &imgFile);

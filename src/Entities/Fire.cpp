@@ -7,6 +7,6 @@
 Fire::Fire(sf::RenderWindow *win, string imgFile) : Sprite(win, imgFile) {}
 
 void Fire::moveUp(float delta) {
-    sf::Vector2f distance(0.f, Fire::speedN * delta);
+    sf::Vector2f distance(0.f, -Fire::speedN * delta);
     sprite.move(distance);
 }

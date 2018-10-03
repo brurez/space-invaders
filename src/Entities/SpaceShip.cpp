@@ -7,9 +7,7 @@
 SpaceShip::SpaceShip(sf::RenderWindow *win, string imgFile) : Sprite(win, imgFile) {}
 
 void SpaceShip::moveRight(float delta) {
-    sf::Vector2f
-            distance(SpaceShip::speedN * delta,
-                     0.f);
+    sf::Vector2f distance(SpaceShip::speedN * delta, 0.f);
     if (canMove(distance)) {
         sprite.move(distance);
     }

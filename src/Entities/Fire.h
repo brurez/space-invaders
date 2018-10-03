@@ -10,13 +10,14 @@
 #include "Sprite.h"
 
 class Fire : public Sprite {
+    const float speedN = 300;
+
 public:
+
     Fire(sf::RenderWindow *win, string imgFile);
 
-    void moveUp(float delta);
 
-private:
-    float speedN = -300;
+    void moveUp(float delta);
 };
 
 

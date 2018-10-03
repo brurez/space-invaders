@@ -9,16 +9,17 @@
 #include "Sprite.h"
 
 class SpaceShip : public Sprite {
+    bool canMove(sf::Vector2f distance);
+
+    const float speedN = 300;
+
 public:
+
     void moveRight(float delta);
 
     void moveLeft(float delta);
 
     SpaceShip(sf::RenderWindow *win, string imgFile);
-
-private:
-    bool canMove(sf::Vector2f distance);
-    float speedN = 300;
 };
 
 

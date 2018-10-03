@@ -10,8 +10,7 @@
 #include "Sprite.h"
 
 class Alien : public Sprite {
-    sf::Vector2f speed;
-    float speedN = 50;
+    const float speedN = 50;
 
 public:
     Alien(sf::RenderWindow *win, string imgFile);
