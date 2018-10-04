@@ -8,7 +8,6 @@ Sprite::Sprite(sf::RenderWindow *win, string &imgFile) {
     window = win;
     setTexture(imgFile);
     sprite.setScale(2.5, 2.5);
-
 }
 
 void Sprite::setPosition(float x, float y) {
@@ -30,6 +29,23 @@ sf::Vector2f Sprite::getSize() {
     return sf::Vector2f(size.x * scale.x, size.y * scale.y);
 }
 
+vector<sf::Vector2f> Sprite::getBox()  {
+    return buildBox();
+}
+
 void Sprite::draw() {
     window->draw(sprite);
+}
+
+vector<sf::Vector2f> Sprite::buildBox() {
+    sf::Transform trans = sprite.getTransform();
+    sf::IntRect local = sprite.getTextureRect();
+
+    vector<sf::Vector2f> box = {
+            trans.transformPoint(0.f, 0.f),
+            trans.transformPoint(local.width, 0.f),
+            trans.transformPoint(local.width, local.height),
+            trans.transformPoint(0.f, local.height)
+    };
+    return box;
 }

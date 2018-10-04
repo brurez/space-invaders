@@ -15,9 +15,12 @@ using namespace std;
 
 class Sprite {
 protected:
+    vector<sf::Vector2f> buildBox();
+
     sf::RenderWindow *window;
     sf::Texture texture;
     sf::Vector2f speed;
+    sf::Sprite sprite;
 
 public:
     Sprite(sf::RenderWindow *win, string &imgFile);
@@ -30,8 +33,9 @@ public:
 
     sf::Vector2f getSize();
 
+    vector<sf::Vector2f> getBox();
+
     void draw();
-    sf::Sprite sprite;
 };
 
 

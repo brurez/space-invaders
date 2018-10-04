@@ -116,7 +116,7 @@ int main() {
 
             for (unsigned i = 0; i < aliens.size(); i++) {
                 for (auto &fire : fires) {
-                    if(Collision::BoundingBoxTest(aliens[i]->sprite, fire->sprite)){
+                    if(Collision::BoundingBoxTest(aliens[i], fire)){
                         aliens.erase(aliens.begin() + i);
                     }
                 }

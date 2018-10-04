@@ -122,61 +122,43 @@ namespace Collision {
         return (Distance.x * Distance.x + Distance.y * Distance.y <= (Radius1 + Radius2) * (Radius1 + Radius2));
     }
 
-    class OrientedBoundingBox // Used in the BoundingBoxTest
+    void ProjectOntoAxis(vector<sf::Vector2f> box, const sf::Vector2f &Axis, float &Min,
+                         float &Max) // Project all four points of the OBB onto the given axis and return the dotproducts of the two outermost points
     {
-    public:
-        OrientedBoundingBox(
-                const sf::Sprite &Object) // Calculate the four points of the OBB from a transformed (scaled, rotated...) sprite
-        {
-            sf::Transform trans = Object.getTransform();
-            sf::IntRect local = Object.getTextureRect();
-            Points[0] = trans.transformPoint(0.f, 0.f);
-            Points[1] = trans.transformPoint(local.width, 0.f);
-            Points[2] = trans.transformPoint(local.width, local.height);
-            Points[3] = trans.transformPoint(0.f, local.height);
+        Min = (box[0].x * Axis.x + box[0].y * Axis.y);
+        Max = Min;
+        for (int j = 1; j < 4; j++) {
+            float Projection = (box[j].x * Axis.x + box[j].y * Axis.y);
+
+            if (Projection < Min)
+                Min = Projection;
+            if (Projection > Max)
+                Max = Projection;
         }
+    }
 
-        sf::Vector2f Points[4];
+    bool BoundingBoxTest(Sprite* sprite1, Sprite* sprite2) {
+        vector<sf::Vector2f> box1 = sprite1->getBox();
+        vector<sf::Vector2f> box2 = sprite2->getBox();
 
-        void ProjectOntoAxis(const sf::Vector2f &Axis, float &Min,
-                             float &Max) // Project all four points of the OBB onto the given axis and return the dotproducts of the two outermost points
-        {
-            Min = (Points[0].x * Axis.x + Points[0].y * Axis.y);
-            Max = Min;
-            for (int j = 1; j < 4; j++) {
-                float Projection = (Points[j].x * Axis.x + Points[j].y * Axis.y);
-
-                if (Projection < Min)
-                    Min = Projection;
-                if (Projection > Max)
-                    Max = Projection;
-            }
-        }
-    };
-
-    bool BoundingBoxTest(const sf::Sprite &Object1, const sf::Sprite &Object2) {
-        OrientedBoundingBox OBB1(Object1);
-        OrientedBoundingBox OBB2(Object2);
-
-        // Create the four distinct axes that are perpendicular to the edges of the two rectangles
         sf::Vector2f Axes[4] = {
-                sf::Vector2f(OBB1.Points[1].x - OBB1.Points[0].x,
-                             OBB1.Points[1].y - OBB1.Points[0].y),
-                sf::Vector2f(OBB1.Points[1].x - OBB1.Points[2].x,
-                             OBB1.Points[1].y - OBB1.Points[2].y),
-                sf::Vector2f(OBB2.Points[0].x - OBB2.Points[3].x,
-                             OBB2.Points[0].y - OBB2.Points[3].y),
-                sf::Vector2f(OBB2.Points[0].x - OBB2.Points[1].x,
-                             OBB2.Points[0].y - OBB2.Points[1].y)
+                sf::Vector2f(box1[1].x - box1[0].x,
+                             box1[1].y - box1[0].y),
+                sf::Vector2f(box1[1].x - box1[2].x,
+                             box1[1].y - box1[2].y),
+                sf::Vector2f(box2[0].x - box2[3].x,
+                             box2[0].y - box2[3].y),
+                sf::Vector2f(box2[0].x - box2[1].x,
+                             box2[0].y - box2[1].y)
         };
 
-        for (int i = 0; i < 4; i++) // For each axis...
+        for (auto Axe : Axes) // For each axis...
         {
             float MinOBB1, MaxOBB1, MinOBB2, MaxOBB2;
 
             // ... project the points of both OBBs onto the axis ...
-            OBB1.ProjectOntoAxis(Axes[i], MinOBB1, MaxOBB1);
-            OBB2.ProjectOntoAxis(Axes[i], MinOBB2, MaxOBB2);
+            Collision::ProjectOntoAxis(box1, Axe, MinOBB1, MaxOBB1);
+            Collision::ProjectOntoAxis(box2, Axe, MinOBB2, MaxOBB2);
 
             // ... and check whether the outermost projected points of both OBBs overlap.
             // If this is not the case, the Separating Axis Theorem states that there can be no collision between the rectangles
@@ -184,5 +166,8 @@ namespace Collision {
                 return false;
         }
         return true;
+
     }
-}
+};
+
+

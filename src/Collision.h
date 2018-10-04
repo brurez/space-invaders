@@ -6,6 +6,8 @@
 #define SFML_HELLO_COLLISION_H
 
 
+#include "Entities/Sprite.h"
+
 namespace Collision {
     //////
     /// Test for a collision between two sprites by comparing the alpha values of overlapping pixels
@@ -39,7 +41,7 @@ namespace Collision {
     /// Test for bounding box collision using the Separating Axis Theorem
     /// Supports scaling and rotation
     //////
-    bool BoundingBoxTest(const sf::Sprite& Object1, const sf::Sprite& Object2);
+    bool BoundingBoxTest(Sprite* sprite1, Sprite* sprite2);
 }
 
 
