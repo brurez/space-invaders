@@ -35,7 +35,7 @@ int main() {
 
     std::vector<Fire *> fires;
     std::vector<Alien *> aliens;
-    aliens = Game::buildAliens(8, &window, alien1);
+    aliens = Game::buildAliens(&window, alien1);
 
     sf::Clock clock;
 
@@ -126,6 +126,13 @@ int main() {
 
         } else {
             string introImg = "assets/intro.png";
+            Sprite title = Sprite(&window, introImg);
+            title.setPosition(140, 160);
+            title.draw();
+        }
+
+        if (aliens.size() == 0) {
+            string introImg = "assets/win.png";
             Sprite title = Sprite(&window, introImg);
             title.setPosition(140, 160);
             title.draw();

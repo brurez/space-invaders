@@ -8,7 +8,7 @@
 #include "Entities/Alien.h"
 
 namespace Game {
-    vector<Alien *> buildAliens(unsigned n, sf::RenderWindow *win, string &imgFile);
+    vector<Alien *> buildAliens(sf::RenderWindow *win, string &imgFile);
 }
 
 #endif //SFML_HELLO_GAME_H
