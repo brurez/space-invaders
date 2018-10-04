@@ -28,13 +28,10 @@ int main() {
             (window.getSize().x - spaceShip.getSize().x) / 2,
             window.getSize().y - spaceShip.getSize().y - 4);
 
-    sf::Texture bg;
-    bg.loadFromFile("assets/space.png");
+    string spaceBg = "assets/space.png";
+    Sprite bg(&window, spaceBg);
+    bg.setTextureRect({0, 0, 800, 600});
     bg.setRepeated(true);
-    sf::Sprite bgSprite;
-    bgSprite.setTexture(bg);
-    bgSprite.setScale(2.5, 2.5);
-    bgSprite.setTextureRect({0, 0, 800, 600});
 
     std::vector<Fire *> fires;
     std::vector<Alien *> aliens;
@@ -98,15 +95,12 @@ int main() {
             }
 
             lastShot += delta;
-
-            // Check collision
-
         }
 
         window.clear();
 
         if (isPlaying) {
-             window.draw(bgSprite);
+             bg.draw();
 
             spaceShip.draw();
 
@@ -129,7 +123,6 @@ int main() {
 
                 }
             }
-
 
         } else {
             string introImg = "assets/intro.png";

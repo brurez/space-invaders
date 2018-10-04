@@ -33,6 +33,15 @@ vector<sf::Vector2f> Sprite::getBox()  {
     return buildBox();
 }
 
+void Sprite::setRepeated(bool value) {
+    texture.setRepeated(true);
+    sprite.setTexture(texture);
+}
+
+void Sprite::setTextureRect(const sf::IntRect& rect) {
+    sprite.setTextureRect(rect);
+}
+
 void Sprite::draw() {
     window->draw(sprite);
 }

@@ -29,6 +29,10 @@ public:
 
     void setTexture(string imgFile);
 
+    void setRepeated(bool value);
+
+    void setTextureRect(const sf::IntRect& rectangle);
+
     sf::Vector2f getPosition();
 
     sf::Vector2f getSize();
