@@ -35,12 +35,12 @@ int main() {
 
     std::vector<Fire *> fires;
     std::vector<Alien *> aliens;
-    aliens = Game::buildAliens(&window, alien1);
 
     sf::Clock clock;
 
     float lastShot = 1;
     bool isPlaying = false;
+    bool win = false;
 
     while (window.isOpen()) {
         sf::Event event;
@@ -57,7 +57,9 @@ int main() {
                 if (!isPlaying) {
                     // restart game
                     isPlaying = true;
+                    win = false;
                     lastShot = 1;
+                    aliens = Game::buildAliens(&window, alien1);
                     clock.restart();
                 }
             }
@@ -100,7 +102,7 @@ int main() {
         window.clear();
 
         if (isPlaying) {
-             bg.draw();
+            bg.draw();
 
             spaceShip.draw();
 
@@ -110,7 +112,7 @@ int main() {
 
             for (unsigned i = 0; i < aliens.size(); i++) {
                 for (auto &fire : fires) {
-                    if(Collision::BoundingBoxTest(aliens[i], fire)){
+                    if (Collision::BoundingBoxTest(aliens[i], fire)) {
                         aliens.erase(aliens.begin() + i);
                     }
                 }
@@ -124,20 +126,23 @@ int main() {
                 }
             }
 
+            if (aliens.size() == 0) {
+                isPlaying = false;
+                win = true;
+            }
+
         } else {
-            string introImg = "assets/intro.png";
-            Sprite title = Sprite(&window, introImg);
+            string img;
+            if (win) {
+                img = "assets/win.png";
+            } else {
+                img = "assets/intro.png";
+            }
+
+            Sprite title = Sprite(&window, img);
             title.setPosition(140, 160);
             title.draw();
         }
-
-        if (aliens.size() == 0) {
-            string introImg = "assets/win.png";
-            Sprite title = Sprite(&window, introImg);
-            title.setPosition(140, 160);
-            title.draw();
-        }
-
 
         window.display();
     }
