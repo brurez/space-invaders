@@ -111,9 +111,10 @@ int main() {
             }
 
             for (unsigned i = 0; i < aliens.size(); i++) {
-                for (auto &fire : fires) {
-                    if (Collision::BoundingBoxTest(aliens[i], fire)) {
+                for (unsigned j = 0; j < fires.size(); j++) {
+                    if (Collision::BoundingBoxTest(aliens[i], fires[j])) {
                         aliens.erase(aliens.begin() + i);
+                        fires.erase(fires.begin() + j);
                     }
                 }
                 aliens[i]->draw();
