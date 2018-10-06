@@ -46,6 +46,10 @@ void Sprite::setRotation(float angle) {
     sprite.setRotation(angle);
 }
 
+void Sprite::setColor(sf::Color color) {
+    sprite.setColor(color);
+}
+
 void Sprite::draw() {
     window->draw(sprite);
 }

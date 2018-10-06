@@ -35,6 +35,8 @@ public:
 
     void setRotation(float angle);
 
+    void setColor(sf::Color color);
+
     sf::Vector2f getPosition();
 
     sf::Vector2f getSize();

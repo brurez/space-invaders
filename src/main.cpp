@@ -9,12 +9,13 @@
 #include "Entities/Alien.h"
 #include "game.h"
 
-
 using namespace std;
 
+const unsigned int SCREEN_WIDTH = 800;
+const unsigned int SCREEN_HEIGHT = 640;
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(800, 640), "Space Invaders", sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Space Invaders", sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
     string shipImage = "assets/ship.png";
@@ -108,7 +109,6 @@ int main() {
 
         if (isPlaying) {
             bg.draw();
-
             spaceShip.draw();
 
             for (auto &fire : pFires) {
@@ -127,6 +127,7 @@ int main() {
                     }
                 }
                 aliens[i]->draw();
+
                 int r = rand() % 1000;
                 if (r == 1) {
                     aliens[i]->setTexture(alien2);
@@ -136,6 +137,7 @@ int main() {
                             aliens[i]->getPosition().x + aliens[i]->getSize().x / 2 - 6,
                             aliens[i]->getPosition().y + aliens[i]->getSize().y);
                     aFires.back()->setRotation(180);
+                    aFires.back()->setColor(sf::Color(100, 255, 100));
 
                 } else if (r == 2) {
                     aliens[i]->setTexture(alien1);
@@ -165,8 +167,11 @@ int main() {
             }
 
             Sprite title = Sprite(&window, img);
-            title.setPosition(140, 160);
+            title.setPosition((SCREEN_WIDTH - title.getSize().x) / 2, (SCREEN_HEIGHT - title.getSize().y) / 2);
             title.draw();
+            aliens.clear();
+            aFires.clear();
+            pFires.clear();
         }
 
         window.display();
