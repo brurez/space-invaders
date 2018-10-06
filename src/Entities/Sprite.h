@@ -33,6 +33,8 @@ public:
 
     void setTextureRect(const sf::IntRect& rectangle);
 
+    void setRotation(float angle);
+
     sf::Vector2f getPosition();
 
     sf::Vector2f getSize();

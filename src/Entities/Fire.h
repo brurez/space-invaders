@@ -18,6 +18,8 @@ public:
 
 
     void moveUp(float delta);
+
+    void moveDown(float delta);
 };
 
 

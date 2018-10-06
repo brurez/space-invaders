@@ -7,7 +7,7 @@
 Sprite::Sprite(sf::RenderWindow *win, string &imgFile) {
     window = win;
     setTexture(imgFile);
-    sprite.setScale(2.5, 2.5);
+    sprite.setScale(2, 2);
 }
 
 void Sprite::setPosition(float x, float y) {
@@ -40,6 +40,10 @@ void Sprite::setRepeated(bool value) {
 
 void Sprite::setTextureRect(const sf::IntRect& rect) {
     sprite.setTextureRect(rect);
+}
+
+void Sprite::setRotation(float angle) {
+    sprite.setRotation(angle);
 }
 
 void Sprite::draw() {

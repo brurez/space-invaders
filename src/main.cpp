@@ -33,7 +33,8 @@ int main() {
     bg.setTextureRect({0, 0, 800, 600});
     bg.setRepeated(true);
 
-    std::vector<Fire *> fires;
+    std::vector<Fire *> pFires;
+    std::vector<Fire *> aFires;
     std::vector<Alien *> aliens;
 
     sf::Clock clock;
@@ -80,16 +81,20 @@ int main() {
             // Fires a new shot
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
                 if (lastShot >= 0.5) {
-                    fires.emplace_back(new Fire(&window, fireImage));
-                    fires.back()->setPosition(
+                    pFires.emplace_back(new Fire(&window, fireImage));
+                    pFires.back()->setPosition(
                             spaceShip.getPosition().x + spaceShip.getSize().x / 2 - 6,
                             spaceShip.getPosition().y - spaceShip.getSize().y);
                     lastShot = 0;
                 }
             }
 
-            for (auto &fire : fires) {
+            for (auto &fire : pFires) {
                 fire->moveUp(delta);
+            }
+
+            for (auto &fire : aFires) {
+                fire->moveDown(delta);
             }
 
             for (auto &alien : aliens) {
@@ -106,25 +111,44 @@ int main() {
 
             spaceShip.draw();
 
-            for (auto &fire : fires) {
+            for (auto &fire : pFires) {
+                fire->draw();
+            }
+
+            for (auto &fire : aFires) {
                 fire->draw();
             }
 
             for (unsigned i = 0; i < aliens.size(); i++) {
-                for (unsigned j = 0; j < fires.size(); j++) {
-                    if (Collision::BoundingBoxTest(aliens[i], fires[j])) {
+                for (unsigned j = 0; j < pFires.size(); j++) {
+                    if (Collision::BoundingBoxTest(aliens[i], pFires[j])) {
                         aliens.erase(aliens.begin() + i);
-                        fires.erase(fires.begin() + j);
+                        pFires.erase(pFires.begin() + j);
                     }
                 }
                 aliens[i]->draw();
-                int r = rand() % 20;
-                if (r == 5) {
+                int r = rand() % 1000;
+                if (r == 1) {
                     aliens[i]->setTexture(alien2);
-                } else if (r == 6) {
+
+                    aFires.emplace_back(new Fire(&window, fireImage));
+                    aFires.back()->setPosition(
+                            aliens[i]->getPosition().x + aliens[i]->getSize().x / 2 - 6,
+                            aliens[i]->getPosition().y + aliens[i]->getSize().y);
+                    aFires.back()->setRotation(180);
+
+                } else if (r == 2) {
                     aliens[i]->setTexture(alien1);
 
                 }
+            }
+
+            for (unsigned j = 0; j < aFires.size(); j++) {
+                if (Collision::BoundingBoxTest(aFires[j], &spaceShip)) {
+                    aFires.erase(aFires.begin() + j);
+                    isPlaying = false;
+                }
+
             }
 
             if (aliens.size() == 0) {

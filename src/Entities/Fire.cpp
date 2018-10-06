@@ -10,3 +10,8 @@ void Fire::moveUp(float delta) {
     sf::Vector2f distance(0.f, -Fire::speedN * delta);
     sprite.move(distance);
 }
+
+void Fire::moveDown(float delta) {
+    sf::Vector2f distance(0.f, Fire::speedN * delta);
+    sprite.move(distance);
+}
