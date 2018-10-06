@@ -24,14 +24,15 @@ int main() {
     string alien1 = "assets/alien-idle.png";
     string alien2 = "assets/alien-firing.png";
 
+    string spaceBg = "assets/space.png";
+
     SpaceShip spaceShip(&window, shipImage);
     spaceShip.setPosition(
             (window.getSize().x - spaceShip.getSize().x) / 2,
             window.getSize().y - spaceShip.getSize().y - 4);
 
-    string spaceBg = "assets/space.png";
     Sprite bg(&window, spaceBg);
-    bg.setTextureRect({0, 0, 800, 600});
+    bg.setTextureRect({0, 0, SCREEN_WIDTH, SCREEN_HEIGHT});
     bg.setRepeated(true);
 
     std::vector<Fire *> pFires;
@@ -128,7 +129,7 @@ int main() {
                 }
                 aliens[i]->draw();
 
-                int r = rand() % 1000;
+                int r = rand() % 500;
                 if (r == 1) {
                     aliens[i]->setTexture(alien2);
 
@@ -141,7 +142,6 @@ int main() {
 
                 } else if (r == 2) {
                     aliens[i]->setTexture(alien1);
-
                 }
             }
 
