@@ -20,10 +20,8 @@ int main() {
 
     string shipImage = "assets/ship.png";
     string fireImage = "assets/fire.png";
-
     string alien1 = "assets/alien-idle.png";
     string alien2 = "assets/alien-firing.png";
-
     string spaceBg = "assets/space.png";
 
     SpaceShip spaceShip(&window, shipImage);
@@ -72,24 +70,13 @@ int main() {
         if (isPlaying) {
             float delta = clock.restart().asSeconds();
 
-            // Move ship
+            // MOVEMENT
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
                 spaceShip.moveRight(delta);
             }
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
                 spaceShip.moveLeft(delta);
-            }
-
-            // Fires a new shot
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-                if (lastPlayerFire >= 0.5) {
-                    pFires.emplace_back(new Fire(&window, fireImage));
-                    pFires.back()->setPosition(
-                            spaceShip.getPosition().x + spaceShip.getSize().x / 2 - 6,
-                            spaceShip.getPosition().y - spaceShip.getSize().y);
-                    lastPlayerFire = 0;
-                }
             }
 
             for (auto &fire : pFires) {
@@ -103,6 +90,8 @@ int main() {
             for (auto &alien : aliens) {
                 alien->move(delta);
             }
+
+            // CHECK COLLISIONS
 
             for (unsigned i = 0; i < aliens.size(); i++) {
                 for (unsigned j = 0; j < pFires.size(); j++) {
@@ -122,6 +111,20 @@ int main() {
 
             }
 
+            // PLAYER FIRE
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+                if (lastPlayerFire >= 0.5) {
+                    pFires.emplace_back(new Fire(&window, fireImage));
+                    pFires.back()->setPosition(
+                            spaceShip.getPosition().x + spaceShip.getSize().x / 2 - 6,
+                            spaceShip.getPosition().y - spaceShip.getSize().y);
+                    lastPlayerFire = 0;
+                }
+            }
+
+            // ALIEN FIRE
+
             if(lastAlienFire > 0.5) {
                 unsigned int r = rand() % aliens.size();
 
@@ -134,6 +137,8 @@ int main() {
 
                 lastAlienFire = 0;
             }
+
+            // WIN CONDITION
 
             if (aliens.size() == 0) {
                 isPlaying = false;
